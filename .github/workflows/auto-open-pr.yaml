@@ -9,7 +9,7 @@ jobs:
   auto-open-prs:
     name: "Open Pull Requests"
     permissions: 
-      pull_requests: write
+      pull-requests: write
     runs-on: ubuntu-slim
     steps:
     - name: pull-request-action
