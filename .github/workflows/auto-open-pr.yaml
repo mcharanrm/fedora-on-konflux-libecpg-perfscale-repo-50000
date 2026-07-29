@@ -1,6 +1,6 @@
 ---
-name: "Pull Requests"
-run-name:                              # Name for the workflow run. Variable substitution is allowed ${{ }}
+name: "Auto Open Pull Requests"
+#run-name:                              # Name for the workflow run. Variable substitution is allowed ${{ }}
 on: 
   push:
     branches: 
