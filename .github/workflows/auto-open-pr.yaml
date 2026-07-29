@@ -29,9 +29,9 @@ jobs:
              ${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/pulls \
              -d '{
                    "title": "Add Tekton build pipelines for ${GITHUB_REF_NAME}",
-                   "head":"${GITHUB_REF_NAME}",
+                   "head":"konflux-fedora-on-konflux-libecpg-perfscale-repo-50000",
                    "base":"master"
-                  }' 
+                  }'
 
       # Either I can use the following GitHub action / Or just curl to open the pull request.
       # This removes the overhead of downloading the github actions into the container
