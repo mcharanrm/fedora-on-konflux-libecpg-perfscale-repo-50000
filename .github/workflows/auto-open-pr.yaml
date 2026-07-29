@@ -26,10 +26,10 @@ jobs:
         # Use this data to open pull requests
         curl -L -X POST -H "Accept: application/vnd.github+json" \
              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-             ${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/pulls \
+             ${{ github.api_url }}/repos/${{ github.repository }}/pulls \
              -d '{
-                   "title": "Add Tekton build pipelines for ${GITHUB_REF_NAME}",
-                   "head":"konflux-fedora-on-konflux-libecpg-perfscale-repo-50000",
+                   "title": "Add Tekton build pipelines for ${{ github.ref_name }}",
+                   "head":"${{ github.ref_name }}",
                    "base":"master"
                   }'
 
