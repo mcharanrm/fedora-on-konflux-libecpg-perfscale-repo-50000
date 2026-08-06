@@ -1,43 +1,28 @@
----
 name: "Auto Open Pull Requests"
-##run-name:                              # Name for the workflow run. Variable substitution is allowed ${{ }}
-on: 
+
+on:
   push:
-    branches: 
-    - "konflux-fedora-on-konflux-libecpg-perfscale-repo-**"
+    branches:
+      - "konflux-fedora-on-konflux-libecpg-perfscale-repo-**"
+
 jobs:
   auto-open-prs:
     name: "Open Pull Requests"
-    permissions: 
+    permissions:
+      contents: read
       pull-requests: write
+
     runs-on: ubuntu-slim
+
     steps:
-    - name: pull-request-action
-      run: |
-        # Lets see if we can open the PRs using the information thats available in the GitHub context
-        # First verify whether curl binaries exists in the container
-        curl -V
-
-        # Branch name
-        echo "GITHUB_REF_NAME - ${GITHUB_REF_NAME}"
-        echo "GITHUB_REPOSITORY - ${GITHUB_REPOSITORY}"
-        echo "GITHUB_API_URL - ${GITHUB_API_URL}"
-
-        # Use this data to open pull requests
-        curl -L -X POST -H "Accept: application/vnd.github+json" \
-             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-             ${{ github.api_url }}/repos/${{ github.repository }}/pulls \
-             -d '{
-                   "title": "Add Tekton build pipelines for ${{ github.ref_name }}",
-                   "head":"${{ github.ref_name }}",
-                   "base":"master"
-                  }'
-
-      # Either I can use the following GitHub action / Or just curl to open the pull request.
-      # This removes the overhead of downloading the github actions into the container
-      # uses: vsoch/pull-request-action@master
-      # env:
-      #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   BRANCH_PREFIX: "update/"
-      #   PULL_REQUEST_BRANCH: 
-        
+      - name: Create Pull Request
+        run: |
+          curl -L -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            "${{ github.api_url }}/repos/${{ github.repository }}/pulls" \
+            -d '{
+              "title": "Add Tekton build pipelines for ${{ github.ref_name }}",
+              "head": "${{ github.ref_name }}",
+              "base": "master"
+            }'
