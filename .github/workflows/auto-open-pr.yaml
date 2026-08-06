@@ -1,0 +1,28 @@
+name: "Auto Open Pull Requests"
+
+on:
+  push:
+    branches:
+      - "konflux-fedora-on-konflux-libecpg-perfscale-repo-**"
+
+jobs:
+  auto-open-prs:
+    name: "Open Pull Requests"
+    permissions:
+      contents: read
+      pull-requests: write
+
+    runs-on: ubuntu-slim
+
+    steps:
+      - name: Create Pull Request
+        run: |
+          curl -L -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            "${{ github.api_url }}/repos/${{ github.repository }}/pulls" \
+            -d '{
+              "title": "Add Tekton build pipelines for ${{ github.ref_name }}",
+              "head": "${{ github.ref_name }}",
+              "base": "master"
+            }'

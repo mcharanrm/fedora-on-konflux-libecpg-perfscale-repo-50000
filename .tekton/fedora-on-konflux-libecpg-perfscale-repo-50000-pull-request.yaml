@@ -1,0 +1,61 @@
+---
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  annotations:
+    build.appstudio.openshift.io/repo: "{{repo_url}}?rev={{revision}}"
+    build.appstudio.redhat.com/commit_sha: '{{revision}}'
+    build.appstudio.redhat.com/pull_request_number: '{{pull_request_number}}'
+    build.appstudio.redhat.com/target_branch: '{{target_branch}}'
+    pipelinesascode.tekton.dev/cancel-in-progress: "true"
+    pipelinesascode.tekton.dev/max-keep-runs: "3"
+    pipelinesascode.tekton.dev/on-cel-expression: event == "pull_request" && target_branch == "master"
+  creationTimestamp: null
+  labels:
+    appstudio.openshift.io/application: "fedora-on-konflux-libecpg-perfscale-app-50000"
+    appstudio.openshift.io/component: "fedora-on-konflux-libecpg-perfscale-comp-50000"
+    pipelines.appstudio.openshift.io/type: build
+  name: "fedora-on-konflux-libecpg-perfscale-comp-50000-on-pull-request"
+  namespace: "konflux-fedora-perfscale-tenant"
+spec:
+  timeouts:
+    pipeline: "6h"
+  params:
+    - name: package-name
+      value: libecpg
+    - name: git-url
+      value: "{{ source_url }}"
+    - name: revision
+      value: "{{ revision }}"
+    - name: target-branch
+      value: "main"
+    - name: build-platforms
+      value:
+        - localhost
+        - linux/arm64
+        - linux/amd64
+    - name: build-architectures
+      value:
+        - x86_64
+        - aarch64
+    - name: ociStorage
+      value: quay.io/redhat-user-workloads-stage/konflux-fedora-perfscale-tenant/fedora-on-konflux-libecpg-perfscale-comp-50000:on-pr-{{revision}}
+    - name: self-ref-url
+      value: "https://github.com/mcharanrm/rpmbuild-pipeline.git"
+    - name: self-ref-revision
+      value: "39dfd91761733418c01a8842b778e5d214f7d465"
+  pipelineRef:
+    resolver: git
+    params:
+      - name: url
+        value: "https://github.com/mcharanrm/rpmbuild-pipeline.git"
+      - name: revision
+        value: "39dfd91761733418c01a8842b778e5d214f7d465"
+      - name: pathInRepo
+        value: pipeline/build-rpm-package.yaml
+  workspaces:
+    - name: git-auth
+      secret:
+        secretName: '{{ git_auth_secret }}'
+  taskRunTemplate:
+    serviceAccountName: build-pipeline-fedora-on-konflux-libecpg-perfscale-comp-50000
